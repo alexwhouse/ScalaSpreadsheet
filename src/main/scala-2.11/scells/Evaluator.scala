@@ -42,4 +42,26 @@ trait Evaluator {
     case Range(_, _) => references(e) map (_.value)
     case _ => List(evaluate(e))
   }
+
+  def hasCircularDependency(parent: Cell, children: List[Cell]): Boolean = {
+    val filter = (cell: Cell) => cell.formula match {
+      case _: Application => true
+      case _: Range => true
+      case _ => false}
+    def circularCheck(combinedChildren: List[Cell]): Boolean =
+      if (combinedChildren == Nil)
+        false
+      else {
+        val childRefs = references(combinedChildren.head.formula)
+        if (childRefs.contains(parent))
+          true
+        else
+          circularCheck(combinedChildren.tail.filter(filter) ++ childRefs.filter(filter))
+      }
+
+    if (!filter.apply(parent))
+      false // If parent is not App or Range it cannot introduce a dependency
+    else
+      circularCheck(children)
+  }
 }

@@ -42,6 +42,6 @@ object FormulaParsers extends RegexParsers {
         case Success(e, _) => e
         case failure: NoSuccess =>
           println("Failure to parse: " + input + "; " + failure.msg)
-          Textual("Error")
+          Textual("ERROR")
       }
 }

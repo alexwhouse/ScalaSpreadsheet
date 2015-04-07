@@ -34,12 +34,25 @@ class Model(height: Int, width: Int) extends Evaluator with Arithmetic {
     }
 
     def formula_=(f: Formula) {
-      for (c <- references(formula)) deafTo(c)
+      for (c <- references(formula))
+        deafTo(c)
       this.f = f
-
-      for (c <- references(formula)) listenTo(c)
-      value = evaluate(f)
+      if (hasCircularDependency(this, references(formula)))
+        this.f = Textual("ERROR: Circular Reference")
+      for (c <- references(formula))
+        listenTo(c)
+      value = evaluate(formula)
     }
+
+    override def hashCode = 41 * (41 + row) + column
+    override def equals(other: Any) = other match {
+      case that: Cell =>
+        (that canEqual this) &&
+          (this.row == that.row) && (this.column == that.column)
+      case _ =>
+        false
+    }
+    def canEqual(other: Any) = other.isInstanceOf[Cell]
   }
 
   case class ValueChanged(cell: Cell) extends Event

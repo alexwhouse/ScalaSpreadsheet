@@ -4,6 +4,7 @@ import scala.swing.Publisher
 import scala.swing.event.Event
 
 /**
+ * The cell table model
  * Created by alexwhouse on 4/3/15.
  */
 class Model(height: Int, width: Int) extends Evaluator with Arithmetic {
@@ -27,20 +28,19 @@ class Model(height: Int, width: Int) extends Evaluator with Arithmetic {
       }
     }
 
-    def formula: Formula = f
+    def formula = f
 
     reactions += {
       case ValueChanged(_) => value = evaluate(formula)
     }
 
     def formula_=(f: Formula) {
-      for (c <- references(formula))
-        deafTo(c)
+      for (c <- references(formula)) deafTo(c)
       this.f = f
-      if (hasCircularDependency(this, references(formula)))
-        this.f = Textual("ERROR: Circular Reference")
-      for (c <- references(formula))
-        listenTo(c)
+      val circularCell = hasCircularDependency(this, references(formula))
+      if (circularCell.isDefined)
+        this.f = Textual("ERROR: " + Coord(circularCell.get.row, circularCell.get.column) + " has a circular dependency")
+      for (c <- references(formula)) listenTo(c)
       value = evaluate(formula)
     }
 

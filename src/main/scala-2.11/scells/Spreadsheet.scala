@@ -20,7 +20,7 @@ class Spreadsheet(height: Int, width: Int) extends ScrollPane {
     autoResizeMode = Table.AutoResizeMode.Off
     showGrid = true
     gridColor = new java.awt.Color(150, 150, 150)
-
+    for (row <- cells; cell <- row) listenTo(cell)
 
     override protected def rendererComponent(isSelected: Boolean, focused: Boolean, row: Int, column: Int) =
       if (focused)
@@ -49,8 +49,6 @@ class Spreadsheet(height: Int, width: Int) extends ScrollPane {
       case ValueChanged(cell) =>
         updateCell(cell.row, cell.column)
     }
-
-    for (row <- cells; cell <- row) listenTo(cell)
   }
 
   val rowHeader = new ListView((0 until height) map (_.toString)) {

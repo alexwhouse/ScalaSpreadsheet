@@ -56,7 +56,6 @@ trait Evaluator {
         if (childRefs.contains(parent)) Some(child)
         else circularCheck(combinedChildren.tail.filter(filter) ++ childRefs.filter(filter))
       }
-
     if (!filter.apply(parent)) None // If parent is not App or Range it cannot introduce a dependency
     else circularCheck(children)
   }

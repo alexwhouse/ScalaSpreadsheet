@@ -7,7 +7,7 @@ import scala.swing.event.Event
  * The cell table model
  * Created by alexwhouse on 4/3/15.
  */
-class Model(height: Int, width: Int) extends Evaluator with Arithmetic {
+class Model(height: Int, width: Int) extends Evaluator with Arithmetic with Trigonometry {
   val cells = Array.tabulate(height, width) { (h, w) => new Cell(h, w) }
 
   case class Cell(row: Int, column: Int) extends Publisher {
